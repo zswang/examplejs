@@ -1,0 +1,127 @@
+(function(exportName) {
+  /* global exports */
+  var exports = exports || {};
+  /**
+   * @file jtests
+   *
+   * test case builder
+   * @author
+   *   zswang (http://weibo.com/zswang)
+   * @version 0.0.5
+   * @date 2016-05-16
+   */
+  /**
+   * @example build():content empty
+    ```js
+    var text = jtests.build('');
+    console.log(text.length);
+    // > 0
+    ```
+   * @example build():example empty
+    ```js
+    var text = jtests.build('space', {});
+    console.log(text.length);
+    // > 0
+    ```
+   * @example build():console.log(1)
+    ```js
+    var text = jtests.build('@example\n\`\`\`js\nconsole.log(1);\n// > 1\n\`\`\`');
+    console.log(/jtests_print\(1\);/.test(text));
+    // > true
+    ```
+   * @example build():options.timeout
+    ```js
+    var text = jtests.build('@example\n\`\`\`js\nconsole.log(1);\n// > 1\n\`\`\`', {
+      timeout: 1234
+    });
+    console.log(/this.timeout\(1234\);/.test(text));
+    // > true
+    ```
+   * @example build():done
+    ```js
+    var text = jtests.build('@example\n\`\`\`js\nsetTimeout(function() {console.log(1);\n// > 1\n// \* done\n},500)\`\`\`');
+    console.log(/\(done\)/.test(text));
+    // > true
+    ```
+   * @example build():throw
+    ```js
+    var text = jtests.build('@example\n\`\`\`js\nconsole.log(xyz);\n// \* throw\n\`\`\`');
+    console.log(/throw\(\);/.test(text));
+    // > true
+    ```
+   * @example build():options.header
+    ```js
+    var text = jtests.build('@example\n\`\`\`js\nconsole.log(xyz);\n// \* throw\n\`\`\`', {
+      header: 'var url = require(\'url\');'
+    });
+    console.log(text.indexOf('var url = require(\'url\');'));
+    // > 0
+    ```
+   */
+  function jtests_build(content, options) {
+    if (!content) {
+      return content;
+    }
+    options = options || {};
+    var exampleCode = '';
+    String(content).replace(/\s*\*?\s*@example\s*(.*)\n\s*```(?:javascript|js)\s*\n([^]*?)\s*```/ig,
+      function(all, it, code) {
+        var hasDone = code.indexOf('// * done') >= 0;
+        var hasThrows = code.indexOf('// * throw') >= 0;
+        it = it || 'none';
+        exampleCode += '\n  it(' + JSON.stringify(it) + ', function(' + (hasDone ? 'done' : '') + ') {';
+        exampleCode += '\n    jtests_printLines = [];\n';
+        code = code.replace(/^(\s*\/\/ > .*\n??)+/mg,
+          function(all) {
+            var space = all.match(/^(\s*)\/\/ > /)[1];
+            var output = all.replace(/^\s*\/\/ > /mg, '');
+            return space + 'assert.equal(jtests_printLines.join("\\n"), ' + JSON.stringify(output) + '); jtests_printLines = [];';
+          }
+        ).replace(/console\.log/g, 'jtests_print');
+        if (hasDone) {
+          code = code.replace('// * done', 'done();');
+        }
+        if (hasThrows) {
+          var space = code.match(/^(\s*)/)[1];
+          code = '\n' + space + '(function() {\n' + code + '\n' + space + '}).should.throw();';
+        }
+        exampleCode += code;
+        exampleCode += '\n  });';
+      }
+    );
+    if (!exampleCode) {
+      return '';
+    }
+    var lines = [];
+    if (options.header) {
+      lines.push(options.header);
+    }
+    lines.push(
+      'describe("' + (options.desc || 'none') + '", function () {',
+      '  var assert = require(\'should\');',
+      '  var util = require(\'util\');',
+      '  var jtests_printLines;',
+      '  function jtests_print() {',
+      '    jtests_printLines.push(util.format.apply(util, arguments));',
+      '  }'
+    );
+    if (options.timeout) {
+      lines.push('  this.timeout(' + options.timeout + ');');
+    }
+    lines.push(exampleCode);
+    lines.push('});');
+    return lines.join('\n');
+  }
+  exports.build = jtests_build;
+  if (typeof define === 'function') {
+    if (define.amd) {
+      define(function() {
+        return exports;
+      });
+    }
+  } else if (typeof module !== 'undefined' && module.exports) {
+    module.exports = exports;
+  } else {
+    window[exportName] = exports;
+  }
+})('jtests');
