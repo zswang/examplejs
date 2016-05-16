@@ -1,1 +1,1 @@
-var jtests = require('../');
+var examplejs = require('../');
