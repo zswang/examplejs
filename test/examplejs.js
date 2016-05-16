@@ -1,5 +1,5 @@
 var examplejs = require('../');
-describe("/Volumes/Transcend/github/examplejs/src/examplejs.js", function () {
+describe("src/examplejs.js", function () {
   var assert = require('should');
   var util = require('util');
   var examplejs_printLines;

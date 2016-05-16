@@ -1,4 +1,4 @@
-describe("/Volumes/Transcend/github/examplejs/README.md", function () {
+describe("README.md", function () {
   var assert = require('should');
   var util = require('util');
   var examplejs_printLines;

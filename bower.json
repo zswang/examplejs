@@ -1,6 +1,6 @@
 {
   "name": "examplejs",
-  "version": "0.0.20",
+  "version": "0.0.23",
   "description": "A tool for converting example code into test cases",
   "homepage": "https://github.com/zswang/jtests",
   "authors": {
