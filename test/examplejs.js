@@ -1,5 +1,5 @@
 var examplejs = require('../');
-describe("src/examplejs.js", function () {
+describe("/Volumes/Transcend/github/examplejs/src/examplejs.js", function () {
   var assert = require('should');
   var util = require('util');
   var examplejs_printLines;
@@ -54,5 +54,3 @@ describe("src/examplejs.js", function () {
     assert.equal(examplejs_printLines.join("\n"), "0"); examplejs_printLines = [];
   });
 });
-
-  

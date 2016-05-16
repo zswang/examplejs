@@ -1,12 +1,17 @@
-describe("debug/README.md", function () {
+describe("/Volumes/Transcend/github/examplejs/README.md", function () {
   var assert = require('should');
   var util = require('util');
   var examplejs_printLines;
   function examplejs_print() {
     examplejs_printLines.push(util.format.apply(util, arguments));
   }
-  this.timeout(3000);
 
+  it("xx", function() {
+    examplejs_printLines = [];
+  var a = 1;
+  var b = 2;
+  examplejs_print(a === b); // false
+  });
   it("表达式相等预判", function() {
     examplejs_printLines = [];
   var a = 1;
@@ -53,5 +58,3 @@ describe("debug/README.md", function () {
   }).should.throw();
   });
 });
-
-  
