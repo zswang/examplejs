@@ -68,10 +68,12 @@ assert.equal(a === b, false);
 
 ```js
 /**
- * @example xx　```js
+ * @example xx
+　```js
   var a = 1;
   var b = 2;
-  console.log(a === b); // false　```
+  console.log(a === b); // false
+　```
  */
 ```
 
