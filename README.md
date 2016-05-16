@@ -185,6 +185,20 @@ $ npm install examplejs -g
 $ examplejs main.js -o test/main.test.js
 ```
 
+### Gulp
+
+```js
+var examplejs = require('gulp-examplejs');
+
+gulp.task('example-js', function() {
+  return gulp.src('src/**.js')
+    .pipe(examplejs({
+      head: 'head.js'
+    }))
+    .pipe(gulp.dest('test'));
+});
+```
+
 ## License
 
 MIT © [zswang](http://weibo.com/zswang)
