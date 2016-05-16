@@ -1,4 +1,4 @@
-describe("README.md", function () {
+describe("debug/README.md", function () {
   var assert = require('should');
   var util = require('util');
   var examplejs_printLines;

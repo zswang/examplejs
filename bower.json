@@ -1,22 +1,22 @@
 {
   "name": "jtests",
-  "version": "0.0.10",
+  "version": "0.0.13",
+  "description": "test case builder",
   "homepage": "https://github.com/zswang/jtests",
   "authors": {
     "name": "zswang",
     "url": "http://weibo.com/zswang"
   },
-  "description": "test case builder",
-  "main": "jtests.js",
-  "moduleType": [
-    "globals",
-    "node"
-  ],
   "keywords": [
     "jtests",
     "parse",
     "code",
     "block"
+  ],
+  "main": "jtests.js",
+  "moduleType": [
+    "globals",
+    "node"
   ],
   "license": "MIT",
   "devDependencies": {},
