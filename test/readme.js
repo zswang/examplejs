@@ -7,12 +7,6 @@ describe("debug/README.md", function () {
   }
   this.timeout(3000);
 
-  it("xx", function() {
-    examplejs_printLines = [];
-  var a = 1;
-  var b = 2;
-  examplejs_print(a === b); // false
-  });
   it("表达式相等预判", function() {
     examplejs_printLines = [];
   var a = 1;
