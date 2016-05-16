@@ -1,6 +1,8 @@
 如何优雅地写测试用例？
 ----------
 
+# [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coverage-image]][coverage-url]
+
 ## 背景
 
 做好单元测试是保证代码质量的有效手段。这里介绍一种用示例代码转为测试用例的工具。
@@ -180,3 +182,14 @@ $ npm install examplejs -g
 ```bash
 $ examplejs main.js -o test/main.test.js
 ```
+
+## License
+
+MIT © [zswang](http://weibo.com/zswang)
+
+[npm-url]: https://npmjs.org/package/examplejs
+[npm-image]: https://badge.fury.io/js/examplejs.svg
+[travis-url]: https://travis-ci.org/zswang/examplejs
+[travis-image]: https://travis-ci.org/zswang/examplejs.svg?branch=master
+[coverage-url]: https://coveralls.io/github/zswang/examplejs?branch=master
+[coverage-image]: https://coveralls.io/repos/zswang/examplejs/badge.svg?branch=master&service=github
