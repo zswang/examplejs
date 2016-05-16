@@ -1,17 +1,16 @@
 {
-  "name": "jtests",
-  "version": "0.0.15",
-  "description": "test case builder",
+  "name": "examplejs",
+  "version": "0.0.17",
+  "description": "A tool for converting example code into test cases",
   "homepage": "https://github.com/zswang/jtests",
   "authors": {
     "name": "zswang",
     "url": "http://weibo.com/zswang"
   },
   "keywords": [
-    "jtests",
-    "parse",
-    "code",
-    "block"
+    "example",
+    "test",
+    "cases"
   ],
   "main": "jtests.js",
   "moduleType": [

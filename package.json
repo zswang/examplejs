@@ -1,6 +1,6 @@
 {
   "name": "examplejs",
-  "version": "0.0.15",
+  "version": "0.0.17",
   "description": "A tool for converting example code into test cases",
   "main": "examplejs.js",
   "keywords": [
@@ -9,7 +9,7 @@
     "cases"
   ],
   "scripts": {
-    "_update_version": "jdists version.jdists",
+    "_update_version": "node version.js",
     "_dist": "jdists src/examplejs.js -o examplejs.js -r debug,test,remove,safe",
     "_compress": "uglifyjs examplejs.js -o examplejs.min.js -p 5 -c -m",
     "example": "jdists readme.jdists.js && node cli debug/README.md -o test/readme.js -t 3000 && node cli src/examplejs.js -o test/examplejs.js -h head.js",
