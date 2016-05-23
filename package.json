@@ -1,6 +1,6 @@
 {
   "name": "examplejs",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "description": "A tool for converting example code into test cases",
   "main": "examplejs.js",
   "keywords": [
@@ -36,6 +36,8 @@
     "gulp-uglify": "^1.5.3",
     "gulp-replace": "^0.5.4",
     "gulp-examplejs": "^0.0.4",
+
+    "jsdom": "^9.1.0",
     "mocha": "^2.0.1",
     "istanbul": "^0.3.17",
     "should": "^4.1.0",
