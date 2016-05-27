@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 'use strict';
-var jtests = require('./');
+var examplejs = require('./');
 var optimist = require('optimist');
 var mkdirp = require('mkdirp');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
+var glob = require('glob');
 
 var argv = optimist
-  .usage('$0 input1.js [input2.js] -o output')
+  .usage('$0 glob1 [glob2] -o output [a]')
   .alias('d', 'desc')
   .describe('desc', 'describe text.')
   .string('d')
@@ -42,26 +43,39 @@ if (argv._.length < 1) {
   return;
 }
 
-var contents = [];
 var filenames = [];
 var header;
 if (argv.head) {
   header = String(fs.readFileSync(argv.head));
 }
+
 argv._.forEach(function (filename) {
-  filenames.push(filename);
-  contents.push(jtests.build(fs.readFileSync(filename), {
+  new glob(filename, {
+    cwd: __dirname,
+    sync: true
+  }).forEach(function (item) {
+    if (filenames.indexOf(item) < 0) {
+      filenames.push(item);
+    }
+  });
+});
+
+var contents = [];
+if (header) {
+  contents.push(header);
+}
+filenames.forEach(function (filename) {
+  contents.push(examplejs.build(fs.readFileSync(filename), {
     desc: argv.desc || filename,
     timeout: argv.timeout,
-    header: header
-  }), null, '  ');
+  }));
 });
+
 var content = contents.join('\n');
 if (argv.output) {
   mkdirp(path.dirname(argv.output));
   fs.writeFileSync(argv.output, content);
-  console.log(util.format('%j jtests output complete.', filenames));
-}
-else {
+  console.log(util.format('%j examplejs output complete.', filenames));
+} else {
   console.log(content);
 }

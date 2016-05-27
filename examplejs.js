@@ -7,8 +7,8 @@
    * A tool for converting example code into test cases
    * @author
    *   zswang (http://weibo.com/zswang)
-   * @version 0.0.24
-   * @date 2016-05-18
+   * @version 0.0.25
+   * @date 2016-05-27
    */
   /**
    * @example build():content empty
