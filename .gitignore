@@ -31,3 +31,4 @@ bower_components
 lib
 coverage
 debug/
+.idea/

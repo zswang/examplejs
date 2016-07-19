@@ -26,6 +26,7 @@
    */
   /*</jdists>*/
 
+  /*<function name="examplejs_build">*/
   /**
    * @example build():content empty
     ```js
@@ -82,14 +83,46 @@
     options = options || {};
 
     var exampleCode = '';
-    String(content).replace(/\s*\*?\s*@example\s*(.*)\n\s*```(?:javascript|js)\s*\n([^]*?)\s*```/ig,
-      function(all, it, code) {
+    var codes = {
+      js: [],
+      css: [],
+      html: []
+    };
+    String(content).replace(/\s*\*?\s*@example\s*(.*)\n\s*((```(?:javascript|js|html|css)\s*\n([^]*?)\s*```[\s]*)+)/ig,
+      function (all, it, example) {
+        example.replace(/```(javascript|js|html|css)\s*\n([^]*?)\s*```/g, function (all, lang, code) {
+          lang = lang.toLowerCase();
+          if ('javascript' === lang) {
+            lang = 'js';
+          }
+          if (code.trim()) {
+            codes[lang].push(code);
+          }
+        });
+        if (codes.css.length > 0) {
+          codes.html.unshift('<style>' + codes.css.join('\n') + '</style>');
+        }
+        if (codes.html.length > 0) { // jsdom
+          exampleCode += '\n  it(jsdom@' + JSON.stringify(it) + ', function(done) {';
+          exampleCode += '\n    jsdom.env(' + JSON.stringify(codes.html.join('\n')) + ',';
+          exampleCode += '\n    function (err, window) {';
+          exampleCode += '\n      global.window = window;';
+          exampleCode += '\n      global.document = window.document;';
+          exampleCode += '\n      global.atob = window.atob;';
+          exampleCode += '\n      global.btoa = window.btoa;';
+            // domInclude
+          exampleCode += '\n      assert.equal(err, null);';
+          exampleCode += '\n      done();';
+          exampleCode += '\n    }';
+          exampleCode += '\n  );';
+
+        }
+        var code = codes.js.join('\n');
         var hasDone = code.indexOf('// * done') >= 0;
         var hasThrows = code.indexOf('// * throw') >= 0;
         it = it || 'none';
         exampleCode += '\n  it(' + JSON.stringify(it) + ', function(' + (hasDone ? 'done' : '') + ') {';
         exampleCode += '\n    examplejs_printLines = [];\n';
-
         code = code.replace(/^(\s*\/\/ > .*\n??)+/mg,
           function(all) {
             var space = all.match(/^(\s*)\/\/ > /)[1];
@@ -126,15 +159,40 @@
       '    examplejs_printLines.push(util.format.apply(util, arguments));',
       '  }'
     );
+
     if (options.timeout) {
       lines.push('  this.timeout(' + options.timeout + ');');
     }
     lines.push(exampleCode);
     lines.push('});');
+
+    console.log(lines.join('\n'));
+
     return lines.join('\n');
   }
+  /*</function>*/
+
   exports.build = examplejs_build;
 
+  /*<remove>*/
+  examplejs_build(String(function () {
+    /*
+     * @example jsdom
+     ```css
+     div {
+       backgrund: red;
+     }
+     ```
+     ```html
+     <div></div>
+     ```
+     ```js
+     console.log(document.querySelector('div') != null);
+     // true
+     ```
+    */
+  }).match(/\/\*([^]*)\*\//)[1]);
+  /*</remove>*/
   if (typeof define === 'function') {
     if (define.amd) {
       define(function() {

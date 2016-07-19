@@ -1,6 +1,6 @@
 {
   "name": "examplejs",
-  "version": "0.0.25",
+  "version": "0.0.27",
   "description": "A tool for converting example code into test cases",
   "main": "examplejs.js",
   "keywords": [
