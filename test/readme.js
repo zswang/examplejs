@@ -1,3 +1,5 @@
+var examplejs = require('../');
+
 describe("README.md", function () {
   var assert = require('should');
   var util = require('util');
@@ -5,56 +7,85 @@ describe("README.md", function () {
   function examplejs_print() {
     examplejs_printLines.push(util.format.apply(util, arguments));
   }
+  var jsdom = require('jsdom');
+  
 
-  it("xx", function() {
+  it("xxyy", function () {
     examplejs_printLines = [];
-	  var a = 1;
-	  var b = 2;
-	  examplejs_print(a === b); // false
+    var a = 1;
+    var b = 2;
+    examplejs_print(a === b); // false
   });
-  it("表达式相等预判", function() {
+          
+  it("表达式相等预判", function () {
     examplejs_printLines = [];
-	  var a = 1;
-	  var b = 2;
-	  examplejs_print(a === b);
-	  assert.equal(examplejs_printLines.join("\n"), "false"); examplejs_printLines = [];
+    var a = 1;
+    var b = 2;
+    examplejs_print(a === b);
+    assert.equal(examplejs_printLines.join("\n"), "false"); examplejs_printLines = [];
   });
-  it("表达式结果预判", function() {
+          
+  it("表达式结果预判", function () {
     examplejs_printLines = [];
-	  var a = 1;
-	  var b = 2;
-	  examplejs_print(a + b);
-	  assert.equal(examplejs_printLines.join("\n"), "3"); examplejs_printLines = [];
+    var a = 1;
+    var b = 2;
+    examplejs_print(a + b);
+    assert.equal(examplejs_printLines.join("\n"), "3"); examplejs_printLines = [];
   });
-  it("表达式类型预判", function() {
+          
+  it("表达式类型预判", function () {
     examplejs_printLines = [];
-	  var a = 1;
-	  examplejs_print(JSON.stringify(a + '1'));
-	  assert.equal(examplejs_printLines.join("\n"), "\"11\""); examplejs_printLines = [];
+    var a = 1;
+    examplejs_print(JSON.stringify(a + '1'));
+    assert.equal(examplejs_printLines.join("\n"), "\"11\""); examplejs_printLines = [];
   });
-  it("批量表达式预判", function() {
+          
+  it("批量表达式预判", function () {
     examplejs_printLines = [];
-	  for (var i = 0; i < 5; i++) {
-		examplejs_print(i);
-	  }
-	  assert.equal(examplejs_printLines.join("\n"), "0\n1\n2\n3\n4"); examplejs_printLines = [];
+    for (var i = 0; i < 5; i++) {
+      examplejs_print(i);
+    }
+    assert.equal(examplejs_printLines.join("\n"), "0\n1\n2\n3\n4"); examplejs_printLines = [];
   });
-  it("异步执行预判", function(done) {
+          
+  it("异步执行预判", function (done) {
     examplejs_printLines = [];
-	  var a = 1;
-	  setTimeout(function () {
-		examplejs_print(a);
-		assert.equal(examplejs_printLines.join("\n"), "2"); examplejs_printLines = [];
-		done();
-	  }, 1000);
-	  a++;
+    var a = 1;
+    setTimeout(function () {
+      examplejs_print(a);
+      assert.equal(examplejs_printLines.join("\n"), "2"); examplejs_printLines = [];
+      done();
+    }, 1000);
+    a++;
   });
-  it("异常执行预判", function() {
+          
+  it("异常执行预判", function () {
     examplejs_printLines = [];
 
-	  (function() {
-	  var a = JSON.parse('#error');
-	  // * throw
-	  }).should.throw();
+    (function() {
+    var a = JSON.parse('#error');
+    // * throw
+    }).should.throw();
   });
+          
+  it("jsdom@浏览器环境", function (done) {
+    jsdom.env("    <div></div>", function (err, window) {
+      global.window = window;
+      ['atob', 'btoa', 'document', 'navigator', 'location', 'screen', 'alert', 'prompt'].forEach(
+        function (key) {
+          global[key] = window[key];
+        }
+      );
+      assert.equal(err, null);
+      done();
+    });
+  });
+          
+  it("浏览器环境", function () {
+    examplejs_printLines = [];
+    examplejs_print(document.querySelector('div') !== null);
+    assert.equal(examplejs_printLines.join("\n"), "true"); examplejs_printLines = [];
+  });
+          
 });
+         

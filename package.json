@@ -1,6 +1,6 @@
 {
   "name": "examplejs",
-  "version": "0.0.27",
+  "version": "0.1.2",
   "description": "A tool for converting example code into test cases",
   "main": "examplejs.js",
   "keywords": [
@@ -11,9 +11,9 @@
   "scripts": {
     "_update_version": "node version.js",
     "_dist": "gulp",
-    "example": "gulp example",
+    "example": "node cli README.md -o test/readme.js -h head.js && node cli src/examplejs.js -o test/examplejs.js -h head.js",
     "test": "istanbul cover --hook-run-in-context node_modules/mocha/bin/_mocha -- -R spec",
-    "mocha": "npm run example && mocha",
+    "mocha": "mocha",
     "dist": "npm run _update_version && npm run example && npm run _dist && npm run test",
     "lint": "jshint src/*.js *.json"
   },
@@ -36,12 +36,12 @@
     "gulp-rename": "^1.2.2",
     "gulp-uglify": "^1.5.3",
     "gulp-replace": "^0.5.4",
-    "gulp-examplejs": "^0.0.4",
     "jsdom": "^9.1.0",
     "mocha": "^2.0.1",
     "istanbul": "^0.3.17",
     "should": "^4.1.0",
-    "jshint": "^2.5.8"
+    "jshint": "^2.5.8",
+    "jstrs": "^0.0.37"
   },
   "bin": {
     "examplejs": "cli.js"

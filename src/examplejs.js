@@ -26,7 +26,11 @@
    */
   /*</jdists>*/
 
-  /*<function name="examplejs_build">*/
+  /*<jdists encoding="fndep" depend="format" import="../node_modules/jstrs/jstrs.js">*/
+  var format = require('jstrs').format;
+  /*</jdists>*/
+
+  /*<function name="examplejs_build" depend="format">*/
   /**
    * @example build():content empty
     ```js
@@ -40,9 +44,9 @@
     console.log(text.length);
     // > 0
     ```
-   * @example build():console.log(1)
+   * @example build():lang => javascript && console.log(1)
     ```js
-    var text = examplejs.build('@example\n\`\`\`js\nconsole.log(1);\n// > 1\n\`\`\`');
+    var text = examplejs.build('@example\n\`\`\`javascript\nconsole.log(1);\n// > 1\n\`\`\`');
     console.log(/examplejs_print\(1\);/.test(text));
     // > true
     ```
@@ -74,8 +78,13 @@
     console.log(text.indexOf('var url = require(\'url\');'));
     // > 0
     ```
+   * @example build():jsdom css & html
+    ```js
+    var text = examplejs.build('@example\n\`\`\`css\ndiv { color: red; }\n\`\`\`\n\`\`\`html\n<div></div>\n\`\`\`');
+    console.log(text.indexOf('var jsdom = require(\'jsdom\');') >= 0);
+    // > true
+    ```
    */
-
   function examplejs_build(content, options) {
     if (!content) {
       return content;
@@ -83,14 +92,16 @@
     options = options || {};
 
     var exampleCode = '';
-    var codes = {
-      js: [],
-      css: [],
-      html: []
-    };
+    var jsdomExists;
     String(content).replace(/\s*\*?\s*@example\s*(.*)\n\s*((```(?:javascript|js|html|css)\s*\n([^]*?)\s*```[\s]*)+)/ig,
-      function (all, it, example) {
-        example.replace(/```(javascript|js|html|css)\s*\n([^]*?)\s*```/g, function (all, lang, code) {
+      function(all, it, example) {
+        var codes = {
+          js: [],
+          css: [],
+          html: []
+        };
+        it = it || 'none';
+        example.replace(/```(javascript|js|html|css)\s*\n([^]*?)\s*```/g, function(all, lang, code) {
           lang = lang.toLowerCase();
           if ('javascript' === lang) {
             lang = 'js';
@@ -103,26 +114,34 @@
           codes.html.unshift('<style>' + codes.css.join('\n') + '</style>');
         }
         if (codes.html.length > 0) { // jsdom
-          exampleCode += '\n  it(jsdom@' + JSON.stringify(it) + ', function(done) {';
-          exampleCode += '\n    jsdom.env(' + JSON.stringify(codes.html.join('\n')) + ',';
-          exampleCode += '\n    function (err, window) {';
-          exampleCode += '\n      global.window = window;';
-          exampleCode += '\n      global.document = window.document;';
-          exampleCode += '\n      global.atob = window.atob;';
-          exampleCode += '\n      global.btoa = window.btoa;';
-            // domInclude
-          exampleCode += '\n      assert.equal(err, null);';
-          exampleCode += '\n      done();';
-          exampleCode += '\n    }';
-          exampleCode += '\n  );';
+          jsdomExists = true;
 
+          /*<jdists encoding="candy">*/
+          exampleCode += format( /*#*/ function() {
+            /*
+  it(#{it}, function (done) {
+    jsdom.env(#{html}, function (err, window) {
+      global.window = window;
+      ['atob', 'btoa', 'document', 'navigator', 'location', 'screen', 'alert', 'prompt'].forEach(
+        function (key) {
+          global[key] = window[key];
+        }
+      );
+      assert.equal(err, null);
+      done();
+    });
+  });
+          */
+          }, {
+            html: JSON.stringify(codes.html.join('\n')),
+            it: JSON.stringify('jsdom@' + it)
+          });
+          /*</jdists>*/
         }
         var code = codes.js.join('\n');
         var hasDone = code.indexOf('// * done') >= 0;
         var hasThrows = code.indexOf('// * throw') >= 0;
-        it = it || 'none';
-        exampleCode += '\n  it(' + JSON.stringify(it) + ', function(' + (hasDone ? 'done' : '') + ') {';
-        exampleCode += '\n    examplejs_printLines = [];\n';
+
         code = code.replace(/^(\s*\/\/ > .*\n??)+/mg,
           function(all) {
             var space = all.match(/^(\s*)\/\/ > /)[1];
@@ -139,8 +158,20 @@
           var space = code.match(/^(\s*)/)[1];
           code = '\n' + space + '(function() {\n' + code + '\n' + space + '}).should.throw();';
         }
-        exampleCode += code;
-        exampleCode += '\n  });';
+        /*<jdists encoding="candy">*/
+        exampleCode += format( /*#*/ function() {
+          /*
+  it(#{it}, function (#{done}) {
+    examplejs_printLines = [];
+#{code}
+  });
+          */
+        }, {
+          code: code,
+          done: hasDone ? 'done' : '',
+          it: JSON.stringify(it)
+        });
+        /*</jdists>*/
       }
     );
     if (!exampleCode) {
@@ -150,24 +181,30 @@
     if (options.header) {
       lines.push(options.header);
     }
+    /*<jdists encoding="candy">*/
     lines.push(
-      'describe("' + (options.desc || 'none') + '", function () {',
-      '  var assert = require(\'should\');',
-      '  var util = require(\'util\');',
-      '  var examplejs_printLines;',
-      '  function examplejs_print() {',
-      '    examplejs_printLines.push(util.format.apply(util, arguments));',
-      '  }'
+      format( /*#*/ function() {
+        /*
+describe(#{desc}, function () {
+  var assert = require('should');
+  var util = require('util');
+  var examplejs_printLines;
+  function examplejs_print() {
+    examplejs_printLines.push(util.format.apply(util, arguments));
+  }
+  #{jsdom}
+  #{timeout}
+#{exampleCode}
+});
+         */
+      }, {
+        desc: JSON.stringify(options.desc || 'none'),
+        jsdom: (jsdomExists ? "var jsdom = require('jsdom');" : ''),
+        timeout: options.timeout ? 'this.timeout(' + options.timeout + ');' : '',
+        exampleCode: exampleCode
+      })
     );
-
-    if (options.timeout) {
-      lines.push('  this.timeout(' + options.timeout + ');');
-    }
-    lines.push(exampleCode);
-    lines.push('});');
-
-    console.log(lines.join('\n'));
-
+    /*</jdists>*/
     return lines.join('\n');
   }
   /*</function>*/
@@ -175,23 +212,18 @@
   exports.build = examplejs_build;
 
   /*<remove>*/
-  examplejs_build(String(function () {
-    /*
-     * @example jsdom
-     ```css
-     div {
-       backgrund: red;
-     }
-     ```
-     ```html
-     <div></div>
-     ```
-     ```js
-     console.log(document.querySelector('div') != null);
-     // true
-     ```
-    */
-  }).match(/\/\*([^]*)\*\//)[1]);
+  console.log(examplejs_build(String(function() {
+  /*
+   * @example 浏览器环境
+    ```html
+    <div></div>
+    ```
+    ```js
+    console.log(document.querySelector('div') !== null);
+    // > true
+    ```
+   */
+  }).match(/\/\*([^]*)\*\//)[1]));
   /*</remove>*/
   if (typeof define === 'function') {
     if (define.amd) {

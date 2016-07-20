@@ -46,7 +46,7 @@ assert.equal(a === b, false);
 
 ```js
 /**
- * @example xx
+ * @example xxyy
  * var a = 1;
  * var b = 2;
  * console.log(a === b); // false
@@ -57,7 +57,7 @@ assert.equal(a === b, false);
 
 ```js
 /**
- * @example xx
+ * @example xxyy
   var a = 1;
   var b = 2;
   console.log(a === b); // false
@@ -66,14 +66,14 @@ assert.equal(a === b, false);
 
 为区分运行环境，所以得指定语言，如：
 
-	/**
-	 * @example xx
-	  ```js
-	  var a = 1;
-	  var b = 2;
-	  console.log(a === b); // false
-	  ```
-	 */
+  /**
+   * @example xxyy
+    ```js
+    var a = 1;
+    var b = 2;
+    console.log(a === b); // false
+    ```
+   */
 
 
 ## 约定
@@ -82,84 +82,97 @@ assert.equal(a === b, false);
 
 ![image](https://cloud.githubusercontent.com/assets/536587/15286345/02c42cde-1b8f-11e6-9a01-562418199de4.png)
 
-	/**
-	 * @example 表达式相等预判
-	  ```js
-	  var a = 1;
-	  var b = 2;
-	  console.log(a === b);
-	  // > false
-	  ```
-	 */
+  /**
+   * @example 表达式相等预判
+    ```js
+    var a = 1;
+    var b = 2;
+    console.log(a === b);
+    // > false
+    ```
+   */
 
-	/**
-	 * @example 表达式结果预判
-	  ```js
-	  var a = 1;
-	  var b = 2;
-	  console.log(a + b);
-	  // > 3
-	  ```
-	 */
+  /**
+   * @example 表达式结果预判
+    ```js
+    var a = 1;
+    var b = 2;
+    console.log(a + b);
+    // > 3
+    ```
+   */
 
 
-	/*
-	 * @example 表达式类型预判
-	  ```js
-	  var a = 1;
-	  console.log(JSON.stringify(a + '1'));
-	  // > "11"
-	  ```
-	 */
+  /*
+   * @example 表达式类型预判
+    ```js
+    var a = 1;
+    console.log(JSON.stringify(a + '1'));
+    // > "11"
+    ```
+   */
 
 ### 批量输出预判
 
 ![image](https://cloud.githubusercontent.com/assets/536587/15286346/09169450-1b8f-11e6-8087-a0f8c4489b56.png)
 
 
-	/*
-	 * @example 批量表达式预判
-	  ```js
-	  for (var i = 0; i < 5; i++) {
-		console.log(i);
-	  }
-	  // > 0
-	  // > 1
-	  // > 2
-	  // > 3
-	  // > 4
-	  ```
-	 */
+  /*
+   * @example 批量表达式预判
+    ```js
+    for (var i = 0; i < 5; i++) {
+      console.log(i);
+    }
+    // > 0
+    // > 1
+    // > 2
+    // > 3
+    // > 4
+    ```
+   */
 
 ### 异步完成
 
 ![image](https://cloud.githubusercontent.com/assets/536587/15286354/0f2f9710-1b8f-11e6-88d8-37e2a0055d5c.png)
 
 
-	/*
-	 * @example 异步执行预判
-	  ```js
-	  var a = 1;
-	  setTimeout(function () {
-		console.log(a);
-		// > 2
-		// * done
-	  }, 1000);
-	  a++;
-	  ```
-	 */
+  /*
+   * @example 异步执行预判
+    ```js
+    var a = 1;
+    setTimeout(function () {
+      console.log(a);
+      // > 2
+      // * done
+    }, 1000);
+    a++;
+    ```
+   */
 
 ### 异常预判
 
 ![image](https://cloud.githubusercontent.com/assets/536587/15286361/13b9ec68-1b8f-11e6-8839-d61ccaefbf23.png)
 
-	/*
-	 * @example 异常执行预判
-	  ```js
-	  var a = JSON.parse('#error');
-	  // * throw
-	  ```
-	*/
+  /*
+   * @example 异常执行预判
+    ```js
+    var a = JSON.parse('#error');
+    // * throw
+    ```
+  */
+
+### 浏览器环境
+
+  /*
+   * @example 浏览器环境
+    ```html
+    <div></div>
+    ```
+    ```js
+    console.log(document.querySelector('div') !== null);
+    // > true
+    ```
+   */
 
 ## 使用方法
 
