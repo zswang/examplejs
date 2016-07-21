@@ -70,17 +70,33 @@ describe("src/examplejs.js", function () {
     assert.equal(examplejs_printLines.join("\n"), "true"); examplejs_printLines = [];
   });
           
-  it("jsdom@浏览器环境", function (done) {
-    jsdom.env("    <div></div>", function (err, window) {
-      global.window = window;
-      ['atob', 'btoa', 'document', 'navigator', 'location', 'screen', 'alert', 'prompt'].forEach(
-        function (key) {
-          global[key] = window[key];
-        }
-      );
-      assert.equal(err, null);
-      done();
+  it("build():options.globals", function () {
+    examplejs_printLines = [];
+    var text = examplejs.build('@example\n\`\`\`css\ndiv { color: red; }\n\`\`\`\n\`\`\`html\n<div></div>\n\`\`\`', {
+      globals: 'btoa,atob'
     });
+    examplejs_print(text.indexOf('atob') >= 0 && text.indexOf('btoa') >= 0);
+    assert.equal(examplejs_printLines.join("\n"), "true"); examplejs_printLines = [];
+  });
+          
+  it("jsdom@浏览器环境", function (done) {
+    jsdom.env("    <div></div>", {
+        features: {
+          FetchExternalResources : ["script", "link"],
+          ProcessExternalResources: ["script"]
+        }
+      },
+      function (err, window) {
+        global.window = window;
+        ["document","navigator"].forEach(
+          function (key) {
+            global[key] = window[key];
+          }
+        );
+        assert.equal(err, null);
+        done();
+      }
+    );
   });
           
   it("浏览器环境", function () {

@@ -174,6 +174,31 @@ assert.equal(a === b, false);
     ```
    */
 
+### jQuery
+
+![image](https://cloud.githubusercontent.com/assets/536587/17015910/2a5873f0-4f5f-11e6-9f52-e208e671b775.png)
+
+  /*
+   * @example jQuery
+     ```css
+     .red {
+       background-color: red;
+     }
+     ```
+     ```html
+     <div class="red"></div>
+     <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+     ```
+     ```js
+     $(function () {
+       console.log($('.red').css('background-color'));
+       // > red
+       // * done
+     })
+     ```
+   */
+
+
 ## 使用方法
 
 ### 安装

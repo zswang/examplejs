@@ -7,7 +7,7 @@
    * A tool for converting example code into test cases
    * @author
    *   zswang (http://weibo.com/zswang)
-   * @version 0.1.4
+   * @version 0.1.8
    * @date 2016-07-21
    */
   /*<function name="format">*/
@@ -62,6 +62,12 @@
   /*</function>*/
   /*<function name="examplejs_build" depend="format">*/
   /**
+   * 提取代码中的测试用例
+   *
+   * @param {String} content 文本内容
+   * @param {Object=} options 配置项
+   * @param {String=} options.header 测试文件头部内容
+   * @param {String=} options.globals 导出全局变量，jsdom 环境中使用
    * @example build():content empty
     ```js
     var text = examplejs.build('');
@@ -114,6 +120,14 @@
     console.log(text.indexOf('var jsdom = require(\'jsdom\');') >= 0);
     // > true
     ```
+   * @example build():options.globals
+    ```js
+    var text = examplejs.build('@example\n\`\`\`css\ndiv { color: red; }\n\`\`\`\n\`\`\`html\n<div></div>\n\`\`\`', {
+      globals: 'btoa,atob'
+    });
+    console.log(text.indexOf('atob') >= 0 && text.indexOf('btoa') >= 0);
+    // > true
+    ```
    */
   function examplejs_build(content, options) {
     if (!content) {
@@ -144,9 +158,12 @@
         }
         if (codes.html.length > 0) { // jsdom
           jsdomExists = true;
-          exampleCode += format( "\n  it(#{it}, function (done) {\n    jsdom.env(#{html}, function (err, window) {\n      global.window = window;\n      ['atob', 'btoa', 'document', 'navigator', 'location', 'screen', 'alert', 'prompt'].forEach(\n        function (key) {\n          global[key] = window[key];\n        }\n      );\n      assert.equal(err, null);\n      done();\n    });\n  });\n          ", {
+          exampleCode += format( "\n  it(#{it}, function (done) {\n    jsdom.env(#{html}, {\n        features: {\n          FetchExternalResources : [\"script\", \"link\"],\n          ProcessExternalResources: [\"script\"]\n        }\n      },\n      function (err, window) {\n        global.window = window;\n        #{global}.forEach(\n          function (key) {\n            global[key] = window[key];\n          }\n        );\n        assert.equal(err, null);\n        done();\n      }\n    );\n  });\n          ", {
             html: JSON.stringify(codes.html.join('\n')),
-            it: JSON.stringify('jsdom@' + it)
+            it: JSON.stringify('jsdom@' + it),
+            global: JSON.stringify((options.globals || 'document,navigator').split(',').map(function (item) {
+              return item.trim();
+           }))
           });
         }
         var code = codes.js.join('\n');

@@ -23,6 +23,10 @@ var argv = optimist
   .describe('o', 'output file.')
   .string('o')
 
+  .alias('g', 'globals')
+  .describe('g', 'global exports.')
+  .string('g')
+
   .alias('h', 'head')
   .describe('h', 'head file.')
   .string('h')
@@ -67,6 +71,7 @@ filenames.forEach(function (filename) {
   contents.push(examplejs.build(fs.readFileSync(filename), {
     desc: argv.desc || filename,
     timeout: argv.timeout,
+    globals: argv.globals,
   }));
 });
 

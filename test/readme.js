@@ -69,22 +69,58 @@ describe("README.md", function () {
   });
           
   it("jsdom@浏览器环境", function (done) {
-    jsdom.env("    <div></div>", function (err, window) {
-      global.window = window;
-      ['atob', 'btoa', 'document', 'navigator', 'location', 'screen', 'alert', 'prompt'].forEach(
-        function (key) {
-          global[key] = window[key];
+    jsdom.env("    <div></div>", {
+        features: {
+          FetchExternalResources : ["script", "link"],
+          ProcessExternalResources: ["script"]
         }
-      );
-      assert.equal(err, null);
-      done();
-    });
+      },
+      function (err, window) {
+        global.window = window;
+        ["$","document"].forEach(
+          function (key) {
+            global[key] = window[key];
+          }
+        );
+        assert.equal(err, null);
+        done();
+      }
+    );
   });
           
   it("浏览器环境", function () {
     examplejs_printLines = [];
     examplejs_print(document.querySelector('div') !== null);
     assert.equal(examplejs_printLines.join("\n"), "true"); examplejs_printLines = [];
+  });
+          
+  it("jsdom@jQuery", function (done) {
+    jsdom.env("<style>     .red {\n       background-color: red;\n     }</style>\n     <div class=\"red\"></div>\n     <script src=\"http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js\"></script>", {
+        features: {
+          FetchExternalResources : ["script", "link"],
+          ProcessExternalResources: ["script"]
+        }
+      },
+      function (err, window) {
+        global.window = window;
+        ["$","document"].forEach(
+          function (key) {
+            global[key] = window[key];
+          }
+        );
+        assert.equal(err, null);
+        done();
+      }
+    );
+  });
+          
+  it("jQuery", function (done) {
+    examplejs_printLines = [];
+     $(function () {
+       examplejs_print($('.red').css('background-color'));
+       assert.equal(examplejs_printLines.join("\n"), "red"); examplejs_printLines = [];
+       done();
+     })
   });
           
 });

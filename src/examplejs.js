@@ -32,6 +32,12 @@
 
   /*<function name="examplejs_build" depend="format">*/
   /**
+   * 提取代码中的测试用例
+   *
+   * @param {String} content 文本内容
+   * @param {Object=} options 配置项
+   * @param {String=} options.header 测试文件头部内容
+   * @param {String=} options.globals 导出全局变量，jsdom 环境中使用
    * @example build():content empty
     ```js
     var text = examplejs.build('');
@@ -84,6 +90,14 @@
     console.log(text.indexOf('var jsdom = require(\'jsdom\');') >= 0);
     // > true
     ```
+   * @example build():options.globals
+    ```js
+    var text = examplejs.build('@example\n\`\`\`css\ndiv { color: red; }\n\`\`\`\n\`\`\`html\n<div></div>\n\`\`\`', {
+      globals: 'btoa,atob'
+    });
+    console.log(text.indexOf('atob') >= 0 && text.indexOf('btoa') >= 0);
+    // > true
+    ```
    */
   function examplejs_build(content, options) {
     if (!content) {
@@ -115,26 +129,35 @@
         }
         if (codes.html.length > 0) { // jsdom
           jsdomExists = true;
-
           /*<jdists encoding="candy">*/
           exampleCode += format( /*#*/ function() {
             /*
   it(#{it}, function (done) {
-    jsdom.env(#{html}, function (err, window) {
-      global.window = window;
-      ['atob', 'btoa', 'document', 'navigator', 'location', 'screen', 'alert', 'prompt'].forEach(
-        function (key) {
-          global[key] = window[key];
+    jsdom.env(#{html}, {
+        features: {
+          FetchExternalResources : ["script", "link"],
+          ProcessExternalResources: ["script"]
         }
-      );
-      assert.equal(err, null);
-      done();
-    });
+      },
+      function (err, window) {
+        global.window = window;
+        #{global}.forEach(
+          function (key) {
+            global[key] = window[key];
+          }
+        );
+        assert.equal(err, null);
+        done();
+      }
+    );
   });
           */
           }, {
             html: JSON.stringify(codes.html.join('\n')),
-            it: JSON.stringify('jsdom@' + it)
+            it: JSON.stringify('jsdom@' + it),
+            global: JSON.stringify((options.globals || 'document,navigator').split(',').map(function (item) {
+              return item.trim();
+           }))
           });
           /*</jdists>*/
         }
