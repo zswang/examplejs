@@ -8,7 +8,7 @@ describe("README.md", function () {
     examplejs_printLines.push(util.format.apply(util, arguments));
   }
   var jsdom = require('jsdom');
-  
+  this.timeout(30000);
 
   it("xxyy", function () {
     examplejs_printLines = [];
@@ -95,7 +95,7 @@ describe("README.md", function () {
   });
           
   it("jsdom@jQuery", function (done) {
-    jsdom.env("<style>       .red {\n         background-color: red;\n       }</style>\n       <div class=\"red\"></div>\n       <script src=\"http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js\"></script>", {
+    jsdom.env("<style>       .red {\n         background-color: red;\n       }</style>\n       <div class=\"red\"></div>\n       <script src=\"https://code.jquery.com/jquery-3.1.0.min.js\"></script>", {
         features: {
           FetchExternalResources : ["script", "link"],
           ProcessExternalResources: ["script"]

@@ -187,7 +187,7 @@ assert.equal(a === b, false);
        ```
        ```html
        <div class="red"></div>
-       <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+       <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
        ```
        ```js
        $(function () {
