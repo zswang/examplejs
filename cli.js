@@ -51,7 +51,6 @@ if (argv.head) {
 
 argv._.forEach(function (filename) {
   new glob(filename, {
-    cwd: __dirname,
     sync: true
   }).forEach(function (item) {
     if (filenames.indexOf(item) < 0) {
