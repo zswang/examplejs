@@ -7,7 +7,7 @@
    * A tool for converting example code into test cases
    * @author
    *   zswang (http://weibo.com/zswang)
-   * @version 0.1.8
+   * @version 0.1.16
    * @date 2016-07-21
    */
   /*<function name="format">*/
